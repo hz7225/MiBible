@@ -104,9 +104,13 @@ public class MiBible extends Activity implements OnItemClickListener {
 	    	adapterNT.selected_item = prefsBook - 40;
 	    }
 	    
+	    populateListOfChaptersAndVerse();
+	    
 	    listViewOT.setAdapter(adapterOT);
-		listViewNT.setAdapter(adapterNT);		
-		populateListOfChaptersAndVerse();
+		listViewNT.setAdapter(adapterNT);				
+		listViewChapter.setAdapter(adapterChapter);
+		listViewVerse.setAdapter(adapterVerse);	
+		
 		
 		//Log.d(TAG, "adapterOT = " + adapterOT);
 		//Log.d(TAG, "adapterNT = " + adapterNT);
@@ -143,9 +147,6 @@ public class MiBible extends Activity implements OnItemClickListener {
 		
 		adapterChapter.selected_item = prefsChapter - 1;
 		adapterVerse.selected_item = prefsVerse - 1;
-			
-		listViewChapter.setAdapter(adapterChapter);
-		listViewVerse.setAdapter(adapterVerse);	
 	}
 	
 	protected void onPause() {
@@ -203,9 +204,12 @@ public class MiBible extends Activity implements OnItemClickListener {
 			launchDisplayActivity(prefsBook, prefsChapter, prefsVerse);
 		}
 		
-		adapterOT.notifyDataSetChanged();
-		adapterNT.notifyDataSetChanged();
 		populateListOfChaptersAndVerse();
+		
+		adapterOT.notifyDataSetChanged();
+		adapterNT.notifyDataSetChanged();		
+		adapterChapter.notifyDataSetChanged();
+		adapterVerse.notifyDataSetChanged();
     }
 	
 	private void launchDisplayActivity(int book, int chapter, int verse) {
