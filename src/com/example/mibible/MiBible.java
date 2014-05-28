@@ -7,22 +7,16 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 public class MiBible extends Activity implements OnItemClickListener {
 	String TAG = "MiBible";
@@ -50,7 +44,6 @@ public class MiBible extends Activity implements OnItemClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Log.d(TAG, "onCreate()");
 		setContentView(R.layout.activity_main);
 		
 	    //Create  Android SQLite database file from downloaded file
@@ -80,7 +73,7 @@ public class MiBible extends Activity implements OnItemClickListener {
 		listViewNT = (ListView) findViewById(R.id.listViewNT);		
 		listViewChapter = (ListView) findViewById(R.id.listViewChapter);
 		listViewVerse = (ListView) findViewById(R.id.listViewVerse);		
-		//Log.d(TAG, "listViewOT = " + listViewOT);	
+		//Set listeners	
 	    listViewOT.setOnItemClickListener(this);
 	    listViewNT.setOnItemClickListener(this);
 	    listViewChapter.setOnItemClickListener(this);
@@ -97,25 +90,25 @@ public class MiBible extends Activity implements OnItemClickListener {
 	    prefsBook = prefs.getInt("BOOK", 1);
 	    prefsChapter = prefs.getInt("CHAPTER", 1);
 	    prefsVerse = prefs.getInt("VERSE", 1);
+	    
+	    //Highlight selected list items from saved preferences
 	    if (prefsBook < 40) {  //OT book
 	    	adapterOT.selected_item = prefsBook - 1;
 	    }
 	    else {  //NT book
 	    	adapterNT.selected_item = prefsBook - 40;
 	    }
+	    adapterChapter.selected_item = prefsChapter - 1;
+		adapterVerse.selected_item = prefsVerse - 1;
 	    
-	    populateListOfChaptersAndVerse();
+	    //Generate data for Chapter and Verse listviews
+	    populateListOfChapterAndVerse();
 	    
+	    //Set ListView adapters
 	    listViewOT.setAdapter(adapterOT);
 		listViewNT.setAdapter(adapterNT);				
 		listViewChapter.setAdapter(adapterChapter);
 		listViewVerse.setAdapter(adapterVerse);	
-		
-		
-		//Log.d(TAG, "adapterOT = " + adapterOT);
-		//Log.d(TAG, "adapterNT = " + adapterNT);
-		//Log.d(TAG, "adapterChapter = " + adapterChapter);
-		//Log.d(TAG, "adapterVerse = " + adapterVerse);    
 	}
 	
 	protected void onResume() {
@@ -123,7 +116,7 @@ public class MiBible extends Activity implements OnItemClickListener {
 		Log.d(TAG, "onResume()");
 	}
 	
-	private void populateListOfChaptersAndVerse() {	
+	private void populateListOfChapterAndVerse() {	
 		// Find the number of chapters from Bible database
 		int c;
 		int v;
@@ -144,9 +137,6 @@ public class MiBible extends Activity implements OnItemClickListener {
 		for (int i = 1; i <= v; i++) {
 			verseList.add(String.valueOf(i));
 		}
-		
-		adapterChapter.selected_item = prefsChapter - 1;
-		adapterVerse.selected_item = prefsVerse - 1;
 	}
 	
 	protected void onPause() {
@@ -194,17 +184,11 @@ public class MiBible extends Activity implements OnItemClickListener {
 			Log.d(TAG, "position="+String.valueOf(position) + ", id=" + String.valueOf(id) + 
 					   " prefsVerse = " + String.valueOf(prefsVerse));
 			
-			//String str = BibleDB.getVerse(prefsBook, prefsChapter, prefsVerse);
-			//Log.d(TAG, str);
-			
-			//List<String> sl = BibleDB.getChapter(prefsBook, prefsChapter);
-			//for (int i =0; i<sl.size(); i++) {
-			//	Log.d(TAG, "["+String.valueOf(i+1)+"]" + sl.get(i));
-			//}
+			//Start DisplayActivity
 			launchDisplayActivity(prefsBook, prefsChapter, prefsVerse);
 		}
 		
-		populateListOfChaptersAndVerse();
+		populateListOfChapterAndVerse();
 		
 		adapterOT.notifyDataSetChanged();
 		adapterNT.notifyDataSetChanged();		
